@@ -9,6 +9,7 @@ import (
 
 	cv "github.com/glycerine/goconvey/convey"
 	"github.com/glycerine/offheap"
+	"time"
 )
 
 func TestSaveRestore(t *testing.T) {
@@ -103,7 +104,6 @@ func TestMetaSaveRestoreMetadataInMsgpack(t *testing.T) {
 	})
 }
 
-/* not currently implemented!
 func Test701SaveRestoreMmapWithRepopulate(t *testing.T) {
 
 	cv.Convey("saving and then loading a table with so many binary keys that we cause a talbe re-size and re-allocation should still save/restore the contents from disk based on the memory mapping", t, func() {
@@ -113,7 +113,7 @@ func Test701SaveRestoreMmapWithRepopulate(t *testing.T) {
 		if err != nil && !strings.HasSuffix(err.Error(), "no such file or directory") {
 			panic(err)
 		}
-		//defer os.Remove(fn)
+		defer os.Remove(fn)
 
 		fmt.Printf("\n\nabout to create h\n")
 		h := offheap.NewHashFileBacked(4096, fn)
@@ -149,11 +149,12 @@ func Test701SaveRestoreMmapWithRepopulate(t *testing.T) {
 		if err != nil && !strings.HasSuffix(err.Error(), "no such file or directory") {
 			panic(err)
 		}
-		err = exec.Command("/bin/cp", "-p", fn, fncopy).Run()
+		err = exec.Command("/bin/cp", "-p", fn+"1", fncopy).Run()
 		if err != nil {
 			panic(err)
 		}
-		//defer os.Remove(fncopy)
+		defer os.Remove(fn + "1")
+		defer os.Remove(fncopy)
 		fmt.Printf("\n\n copied fn='%s' to fncopy='%s' and now trying to read it...\n",
 			fn, fncopy)
 
@@ -172,4 +173,3 @@ func Test701SaveRestoreMmapWithRepopulate(t *testing.T) {
 
 	})
 }
-*/

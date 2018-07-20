@@ -74,6 +74,7 @@ func NewHashFileBacked(initialSize int64, filepath string) *HashTable {
 			t.Population = t2.Population
 			t.ZeroUsed = t2.ZeroUsed
 			t.ZeroCell = t2.ZeroCell
+			t.ArraySize = t2.ArraySize
 		}
 	}
 	// old: off-gc but still on-heap version
@@ -447,7 +448,13 @@ func (t *HashTable) Repopulate(desiredSize uint64) {
 
 	// Allocate new table
 	// TODO: implement growmap for mmap backed resizing.
-	s := NewHashTable(int64(desiredSize))
+	var s *HashTable
+	if t.Mmm.Fd == -1 {
+		s = NewHashTable(int64(desiredSize))
+	} else {
+		newFilePath := t.Mmm.Path + "1"
+		s = NewHashFileBacked(int64(desiredSize), newFilePath)
+	}
 	s.ZeroUsed = t.ZeroUsed
 	if t.ZeroUsed {
 		s.ZeroCell = t.ZeroCell
